@@ -3,6 +3,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:hilocardgame/howtoplay.dart';
+import 'package:hilocardgame/startgame.dart';
 
 class Homepage extends StatefulWidget {
   const Homepage({Key? key}) : super(key: key);
@@ -39,7 +40,7 @@ class _HomepageState extends State<Homepage> {
                         ),
                       ),
                     ),
-                    Image.asset('assets/homepage.png'),
+                    Container(child: Image.asset('assets/homepage.png')),
                     Container(
                       margin: EdgeInsets.all(20),
                       child: RaisedButton(
@@ -51,21 +52,13 @@ class _HomepageState extends State<Homepage> {
                             color: Colors.white,
                           ),
                         ),
-                        onPressed: () {},
-                      ),
-                    ),
-                    Container(
-                      margin: EdgeInsets.all(20),
-                      child: RaisedButton(
-                        color: Colors.red[300],
-                        child: Text(
-                          'VIEW SCORES',
-                          style: TextStyle(
-                            fontSize: 30.0,
-                            color: Colors.white,
-                          ),
-                        ),
-                        onPressed: () {},
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const GameProper()),
+                          );
+                        },
                       ),
                     ),
                     Container(
@@ -135,7 +128,13 @@ class _HomepageState extends State<Homepage> {
                                 color: Colors.white,
                               ),
                             ),
-                            onPressed: () {},
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => const GameProper()),
+                              );
+                            },
                           ),
                         ),
                         Container(
