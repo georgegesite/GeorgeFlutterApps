@@ -2,9 +2,12 @@
 
 import 'package:flutter/material.dart';
 import 'package:hilocardgame/Homepage.dart';
+import 'package:hilocardgame/cardclassSuit.dart';
 
 void main() {
   runApp(MyApp());
+  addSuits();
+  cardListShuffle();
 }
 
 class MyApp extends StatelessWidget {

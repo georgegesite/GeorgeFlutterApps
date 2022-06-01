@@ -1,181 +1,374 @@
-import 'package:hilocardgame/back_card.dart';
-import 'package:hilocardgame/front_card.dart';
 import 'package:flutter/material.dart';
-import 'dart:math';
+import 'package:hilocardgame/flipDetails.dart';
 import 'package:hilocardgame/cardclassSuit.dart';
-import 'package:hilocardgame/systemupdates.dart';
+
+import 'package:flip_card/flip_card.dart';
+import 'package:flip_card/flip_card_controller.dart';
 
 class flipCard extends StatefulWidget {
-  const flipCard({super.key});
+  const flipCard({
+    Key? key,
+  }) : super(key: key);
 
   @override
-  State<flipCard> createState() => _flipCarpState();
+  State<flipCard> createState() => _flipCardState();
 }
 
-class _flipCarpState extends State<flipCard> {
-  bool isFlipped = false;
+class _flipCardState extends State<flipCard> {
+  final ScrollController controller = ScrollController();
+  int index = 0;
+  int index2 = 1;
+  int get imagePath => cardList[index].value;
+  late FlipCardController _controller;
 
-  Widget first() {
-    return Card(
-      key: Key('second'),
-      elevation: 5,
-      child: back_card(),
-    );
-  }
+  int _counter = 0;
 
-  Widget second() {
-    return Card(
-      key: Key('second'),
-      elevation: 5,
-      child: front_card(),
-    );
-  }
-
-  Widget transition(Widget widget, Animation<double> animation) {
-    final flipAnimation = Tween(begin: pi, end: 0.0).animate(animation);
-    return AnimatedBuilder(
-      animation: flipAnimation,
-      child: widget,
-      builder: (context, widget) {
-        final isUnder = (ValueKey(isFlipped) != widget!.key);
-        final value =
-            isUnder ? min(flipAnimation.value, pi / 2) : flipAnimation.value;
-        return Transform(
-          transform: Matrix4.rotationX(value),
-          child: widget,
-          alignment: Alignment.center,
-        );
-      },
-    );
+  @override
+  void initState() {
+    super.initState();
+    _controller = FlipCardController();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Material(
-      color: Colors.transparent,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Align(
-            alignment: Alignment.center,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Center(
-                  child: AnimatedSwitcher(
-                    reverseDuration: Duration(seconds: 5),
-                    duration: Duration(seconds: 5),
-                    switchInCurve: Curves.ease,
-                    switchOutCurve: Curves.easeIn,
-                    child: isFlipped ? second() : first(),
-                    transitionBuilder: transition,
+    return Row(
+      children: [
+        const Padding(padding: EdgeInsets.only(top: 5)),
+        Expanded(
+          flex: 1,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Flex(
+                direction: Axis.vertical,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(5),
+                        child: Container(
+                          color: Colors.white,
+                          height: 200,
+                          width: 140,
+                          child: FlipcardMobile(
+                            imagpath: cardList[index2].imgpath,
+                            key: ValueKey<int>(imagePath),
+                          ),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: ElevatedButton(
+                          // NEXT BUTTON
+                          onPressed: () {
+                            setState(() {
+                              index++;
+                              index2++;
+                              _controller.state?.controller?.reset();
+                              if ((index > 52) && (index2 > 52)) {
+                                showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) =>
+                                      AlertDialog(
+                                    title: const Text('Congratulations!!'),
+                                    content: const Text(
+                                        'You guessed all the cards..Press OK to revert back to home page'),
+                                    actions: <Widget>[
+                                      TextButton(
+                                        onPressed: () {
+                                          Navigator.popUntil(context, (route) {
+                                            return route.settings.name == "/";
+                                          });
+                                        },
+                                        child: const Text('OK'),
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              }
+                            });
+                          },
+                          child: Next(),
+                        ),
+                      ),
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(5),
+                        child: Container(
+                          color: Colors.white,
+                          height: 200,
+                          width: 140,
+                          child: FlipCard(
+                            speed: 500,
+                            controller: _controller,
+                            flipOnTouch: false,
+                            front: Image.asset(
+                              'assets/backcard2.png',
+                              fit: BoxFit.fill,
+                            ),
+                            back: FlipCardDetailsMobile(
+                              imagePath: cardList[index].imgpath,
+                              key: ValueKey<int>(imagePath),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Container(
-                    child: ElevatedButton(
-                      child: const Text("NEXT CARD"),
-                      onPressed: () async {
-                        setState(() {
-                          if (isFlipped = !isFlipped) {
-                            Navigator.of(context).push(MaterialPageRoute(
-                                builder: (context) =>
-                                    system_update_wrong_button()));
-                          }
-                        });
-                      },
+                  const Padding(padding: EdgeInsets.only(top: 15)),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Padding(
+                        //high
+                        padding: const EdgeInsets.all(8.0),
+                        child: ElevatedButton(
+                          onPressed: () {
+                            setState(() {
+                              _controller.state?.controller?.forward();
+                              if (cardList[index].value >
+                                  cardList[index2].value) {
+                                _counter++;
+                              } else {
+                                showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) =>
+                                      AlertDialog(
+                                    backgroundColor: Colors.red,
+                                    title: const Text(
+                                      'GAME OVER',
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontFamily: 'SourceCode',
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    content: Text(
+                                      'HIGHEST SCORE: $_counter',
+                                      style: const TextStyle(
+                                        color: Colors.white,
+                                        fontFamily: 'SourceCode',
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    actions: <Widget>[
+                                      ElevatedButton(
+                                        onPressed: () {
+                                          Navigator.popUntil(context, (route) {
+                                            return route.settings.name == "/";
+                                          });
+                                          cardResetandShuffle();
+                                          _counter = 0;
+                                        },
+                                        style: ElevatedButton.styleFrom(
+                                          primary: Colors.red[300],
+                                        ),
+                                        child: const Text(
+                                          'RETURN HOME',
+                                          style: TextStyle(
+                                            color: Colors.white,
+                                            fontFamily: 'BebasNeue',
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              }
+                            });
+                          },
+                          style: ElevatedButton.styleFrom(
+                            primary: Colors.green[500],
+                          ),
+                          child: High(),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: ElevatedButton(
+                          onPressed: () {
+                            setState(() {
+                              _controller.state?.controller?.forward();
+                              if (cardList[index].value ==
+                                  cardList[index2].value) {
+                                _counter++;
+                              } else {
+                                showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) =>
+                                      AlertDialog(
+                                    backgroundColor: Colors.red,
+                                    title: const Text(
+                                      'GAME OVER',
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontFamily: 'SourceCode',
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    content: Text(
+                                      'HIGHEST SCORE: $_counter',
+                                      style: const TextStyle(
+                                        color: Colors.white,
+                                        fontFamily: 'SourceCode',
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    actions: <Widget>[
+                                      ElevatedButton(
+                                        onPressed: () {
+                                          Navigator.popUntil(context, (route) {
+                                            return route.settings.name == "/";
+                                          });
+                                          cardResetandShuffle();
+                                          _counter = 0;
+                                        },
+                                        style: ElevatedButton.styleFrom(
+                                          primary: Colors.red[300],
+                                        ),
+                                        child: const Text(
+                                          'RETURN HOME',
+                                          style: TextStyle(
+                                            color: Colors.white,
+                                            fontFamily: 'BebasNeue',
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              }
+                            });
+                          },
+                          style: ElevatedButton.styleFrom(
+                            primary: Colors.red,
+                          ),
+                          child: Equal(),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: ElevatedButton(
+                          onPressed: () {
+                            setState(() {
+                              _controller.state?.controller?.forward();
+                              if (cardList[index].value <
+                                  cardList[index2].value) {
+                                _counter++;
+                              } else {
+                                showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) =>
+                                      AlertDialog(
+                                    backgroundColor: Colors.red,
+                                    title: const Text(
+                                      'GAME OVER',
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontFamily: 'SourceCode',
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    content: Text(
+                                      'HIGHEST SCORE: $_counter',
+                                      style: const TextStyle(
+                                        color: Colors.white,
+                                        fontFamily: 'SourceCode',
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    actions: <Widget>[
+                                      ElevatedButton(
+                                        onPressed: () {
+                                          Navigator.popUntil(context, (route) {
+                                            return route.settings.name == "/";
+                                          });
+                                          cardResetandShuffle();
+                                          _counter = 0;
+                                        },
+                                        style: ElevatedButton.styleFrom(
+                                          primary: Colors.red[300],
+                                        ),
+                                        child: const Text(
+                                          'RETURN HOME',
+                                          style: TextStyle(
+                                            color: Colors.white,
+                                            fontFamily: 'BebasNeue',
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              }
+                            });
+                          },
+                          style: ElevatedButton.styleFrom(
+                            primary: Colors.yellow,
+                          ),
+                          child: Low(),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const Padding(padding: EdgeInsets.only(top: 10)),
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(5),
+                    child: Container(
+                      color: Colors.grey[400],
+                      height: 200,
+                      width: 390,
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: ListView.builder(
+                              itemBuilder: ((BuildContext context, int index) {
+                                return Row(
+                                  children: <Widget>[
+                                    const Padding(padding: EdgeInsets.all(1.0)),
+                                    Image.network(
+                                      store[index],
+                                      height: 124,
+                                      width: 75,
+                                    ),
+                                  ],
+                                );
+                              }),
+                              itemCount: store.length,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
-                ),
-                Container(
-                  height: 290,
-                  width: 200,
-                  decoration: BoxDecoration(
-                    image: DecorationImage(
-                        image: AssetImage(cardfaces[0]), fit: BoxFit.cover),
+                  const Padding(padding: EdgeInsets.only(top: 50)),
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      const Padding(padding: EdgeInsets.only(top: 5)),
+                      Text(
+                        'SCORE: $_counter',
+                        style: const TextStyle(
+                          fontSize: 30,
+                          color: Colors.black,
+                        ),
+                      ),
+                      const Padding(padding: EdgeInsets.only(top: 5)),
+                    ],
                   ),
-                ),
-              ],
-            ),
+                ],
+              ),
+            ],
           ),
-          SizedBox(
-            height: 30,
-          ),
-          Container(
-            height: 60,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Padding(
-                  //HIGH OPTION
-                  padding: const EdgeInsets.all(8.0),
-                  child: Container(
-                    child: ElevatedButton(
-                      onPressed: () async {
-                        setState(() {
-                          if (isFlipped = !isFlipped) {
-                            Navigator.of(context).push(MaterialPageRoute(
-                                builder: (context) => system_update_wrong()));
-                          }
-                        });
-                      },
-                      style: ElevatedButton.styleFrom(
-                        primary: Colors.green[500],
-                      ),
-                      child: High(),
-                    ),
-                  ),
-                ),
-                Padding(
-                  //EQUAL OPTION
-                  padding: const EdgeInsets.all(8.0),
-                  child: Container(
-                    child: ElevatedButton(
-                      onPressed: () {
-                        setState(() {
-                          if (isFlipped = !isFlipped) {
-                            Navigator.of(context).push(MaterialPageRoute(
-                                builder: (context) => system_update_correct()));
-                          }
-                        });
-                      },
-                      style: ElevatedButton.styleFrom(
-                        primary: Colors.yellow[800],
-                      ),
-                      child: Equal(),
-                    ),
-                  ),
-                ),
-                Padding(
-                  //LOW OPTION
-                  padding: const EdgeInsets.all(8.0),
-                  child: Container(
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        primary: Colors.red,
-                      ),
-                      onPressed: () {
-                        setState(() {
-                          if (isFlipped = !isFlipped) {
-                            Navigator.of(context).push(MaterialPageRoute(
-                                builder: (context) => system_update_correct()));
-                          }
-                        });
-                      },
-                      child: Low(),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          )
-        ],
-      ),
+        ),
+      ],
     );
   }
 }
 
+// HIGH LOW EQUAL
 class High extends StatelessWidget {
   const High({super.key});
 
@@ -184,7 +377,6 @@ class High extends StatelessWidget {
     return Material(
       color: Colors.transparent,
       child: Container(
-        height: 60,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
@@ -215,7 +407,6 @@ class Equal extends StatelessWidget {
     return Material(
       color: Colors.transparent,
       child: Container(
-        height: 60,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
@@ -246,7 +437,6 @@ class Low extends StatelessWidget {
     return Material(
       color: Colors.transparent,
       child: Container(
-        height: 60,
         child: Align(
           alignment: Alignment.center,
           child: Container(
@@ -254,6 +444,31 @@ class Low extends StatelessWidget {
               "LOW",
               style: TextStyle(
                 fontSize: 30,
+                color: Colors.white,
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class Next extends StatelessWidget {
+  const Next({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: Colors.transparent,
+      child: Container(
+        child: Align(
+          alignment: Alignment.center,
+          child: Container(
+            child: Text(
+              "NEXT",
+              style: TextStyle(
+                fontSize: 30.0,
                 color: Colors.white,
               ),
             ),
