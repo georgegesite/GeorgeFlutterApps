@@ -1,4 +1,6 @@
-// ignore_for_file: prefer_const_constructors
+// ignore_for_file: prefer_const_constructors, unnecessary_new
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 
 class HowToPlay extends StatelessWidget {
@@ -9,77 +11,68 @@ class HowToPlay extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.green[600],
       body: Container(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            const Text(
-              'HOW TO PLAY',
-              style: TextStyle(
-                fontSize: 35.0,
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-              ),
-            ),
-            const Text(
-              //step 1
-              '  1. YOU WILL BE GIVEN 1 FRONT FACING CARD AND 1 BACK FACING CARD.  ',
-              style: TextStyle(
-                fontSize: 25.0,
-                color: Colors.white,
-              ),
-              textAlign: TextAlign.justify,
-            ),
-            const Text(
-              //step 2
-              '  2. YOU WILL HAVE TO GUESS IF THE BACK FACING CARD IS GREATER, LESSER, OR EQUAL TO THE FRONT FACING CARD.',
-              style: TextStyle(
-                fontSize: 25.0,
-                color: Colors.white,
-              ),
-              textAlign: TextAlign.justify,
-            ),
-            const Text(
-              //step 3
-              '  3. ACES ARE CONSIDERED TO HAVE A VALUE OF 1, JACK = 11, QUEEN = 12, AND KING = 13. ',
-              style: TextStyle(
-                fontSize: 25.0,
-                color: Colors.white,
-              ),
-              textAlign: TextAlign.justify,
-            ),
-            const Text(
-              //step 4
-              '  4. IF YOU GUESSED CORRECTLY, YOU WILL GAIN POINTS. IF YOU GUESSED WRONG, THE GAME ENDS AND YOUR TOTAL POINTS WILL BE RECORDED.',
-              style: TextStyle(
-                fontSize: 25.0,
-                color: Colors.white,
-              ),
-              textAlign: TextAlign.justify,
-            ),
-            const Text(
-              //step 5
-              '  5. GAIN POINTS TO BECOME TOP 1',
-              style: TextStyle(
-                fontSize: 25.0,
-                color: Colors.white,
-              ),
-              textAlign: TextAlign.justify,
-            ),
-            Padding(
-              padding: const EdgeInsets.all(10.0),
-              child: Center(
-                child: ElevatedButton(
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                  style: ElevatedButton.styleFrom(
-                    primary: Colors.green[500],
+        decoration: BoxDecoration(
+          image: DecorationImage(
+              image: AssetImage("assets/homescreen.jpg"), fit: BoxFit.cover),
+        ),
+        child: new BackdropFilter(
+          filter: new ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),
+          child: new Container(
+            decoration: new BoxDecoration(color: Colors.white.withOpacity(0.0)),
+            alignment: Alignment.center,
+            child: Container(
+              margin: EdgeInsets.all(15),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  Container(
+                    color: Colors.red,
+                    padding: EdgeInsets.all(5),
+                    child: const Text(
+                      'HOW TO PLAY',
+                      style: TextStyle(
+                        fontSize: 35.0,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
                   ),
-                  child: const Text('RETURN'),
-                ),
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(5),
+                    child: Container(
+                      color: Colors.red[300],
+                      child: Padding(
+                        padding: const EdgeInsets.all(12.0),
+                        child: const Text(
+                          'Press HIGH if you guess that the next card is greater than or equal to the current card.\nPress LOW if you guess that the next card is less than the current card.\nAce = 1, Jack = 11, Queen = 12, King = 13\nGuessing right earns you a point, otherwise, it is GAME OVER for you.  GAIN POINTS TO BECOME TOP 1. Enjoy!',
+                          style: TextStyle(
+                              fontFamily: 'SourceCode',
+                              fontSize: 25.0,
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(0.0),
+                    child: Center(
+                      child: ElevatedButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                        style: ElevatedButton.styleFrom(
+                          primary: Colors.red,
+                        ),
+                        child: const Text('RETURN'),
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
-          ],
+          ),
         ),
       ),
     );

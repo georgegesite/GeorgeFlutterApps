@@ -129,5 +129,3 @@ void cardResetandShuffle() {
   addSuits();
   cardListShuffle();
 }
-
-List<dynamic> store = [];

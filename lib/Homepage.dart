@@ -42,7 +42,7 @@ class _HomepageState extends State<Homepage> {
                     ),
                     Container(child: Image.asset('assets/homepage.png')),
                     Container(
-                      margin: EdgeInsets.all(20),
+                      padding: EdgeInsets.all(20),
                       child: RaisedButton(
                         color: Colors.red[300],
                         child: Text(
@@ -62,7 +62,7 @@ class _HomepageState extends State<Homepage> {
                       ),
                     ),
                     Container(
-                      margin: EdgeInsets.all(20),
+                      padding: EdgeInsets.all(20),
                       child: RaisedButton(
                         color: Colors.red[300],
                         child: Text(
@@ -118,7 +118,7 @@ class _HomepageState extends State<Homepage> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Container(
-                          margin: EdgeInsets.all(20),
+                          padding: const EdgeInsets.all(20),
                           child: RaisedButton(
                             color: Colors.red[300],
                             child: Text(
@@ -138,21 +138,7 @@ class _HomepageState extends State<Homepage> {
                           ),
                         ),
                         Container(
-                          margin: EdgeInsets.all(20),
-                          child: RaisedButton(
-                            color: Colors.red[300],
-                            child: Text(
-                              'VIEW SCORES',
-                              style: TextStyle(
-                                fontSize: 30.0,
-                                color: Colors.white,
-                              ),
-                            ),
-                            onPressed: () {},
-                          ),
-                        ),
-                        Container(
-                          margin: EdgeInsets.all(20),
+                          padding: const EdgeInsets.all(20),
                           child: RaisedButton(
                             color: Colors.red[300],
                             child: Text(
